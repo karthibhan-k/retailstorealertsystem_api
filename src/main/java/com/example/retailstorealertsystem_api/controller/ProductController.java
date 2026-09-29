@@ -9,7 +9,8 @@ import com.example.retailstorealertsystem_api.service.ProductService;
 
 @RestController
 @RequestMapping("/api/products")
-public class ProductController {
+public class ProductController 
+{
 
     private ProductService productservice;
 

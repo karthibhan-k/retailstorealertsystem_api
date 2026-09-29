@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartStore - Retail Inventory & Reorder Alert Dashboard</title>
+  <meta name="description" content="Intelligent real-time inventory tracking, low-stock reorder alert system, stock movement logger, and fast-moving velocity analytics.">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m7.5 4.27 9 5.15"/>
+          <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+          <path d="m3.3 7 8.7 5 8.7-5"/>
+          <path d="M12 22V12"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">SmartStore</div>
+        <span class="brand-tag">Alert Ops v1.0</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a href="#dashboard" class="nav-item active" id="nav-dashboard" data-view="dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="7" height="9" x="3" y="3" rx="1"/>
+            <rect width="7" height="5" x="14" y="3" rx="1"/>
+            <rect width="7" height="9" x="14" y="12" rx="1"/>
+            <rect width="7" height="5" x="3" y="16" rx="1"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#products" class="nav-item" id="nav-products" data-view="products">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55L16.5 14.6a1.78 1.78 0 0 0 0-3.2z"/>
+            <path d="M21 12H17"/>
+          </svg>
+          <span>Products</span>
+        </a>
+      </li>
+      <li>
+        <a href="#movements" class="nav-item" id="nav-movements" data-view="movements">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 16V4M7 4 3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/>
+          </svg>
+          <span>Stock Movements</span>
+        </a>
+      </li>
+      <li>
+        <a href="#alerts" class="nav-item" id="nav-alerts" data-view="alerts">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+          </svg>
+          <span>Reorder Alerts</span>
+          <span class="nav-badge hidden" id="sidebar-alert-badge">0</span>
+        </a>
+      </li>
+      <li>
+        <a href="#analytics" class="nav-item" id="nav-analytics" data-view="analytics">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" x2="18" y1="20" y2="10"/>
+            <line x1="12" x2="12" y1="20" y2="4"/>
+            <line x1="6" x2="6" y1="20" y2="14"/>
+          </svg>
+          <span>Fast-Moving Items</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <span class="status-indicator" id="system-status-indicator"></span>
+        <span id="system-status-text">API Online (8081)</span>
+      </div>
+      <button class="btn-icon" id="btn-refresh-all" title="Refresh all data">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+          <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+          <path d="M16 21h5v-5"/>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Application Body -->
+  <main class="main-layout">
+    <!-- Header -->
+    <header class="header">
+      <div class="page-info">
+        <h1 id="page-title">Inventory Operations Center</h1>
+        <p id="page-subtitle">Real-time stock monitor & automated reorder intelligence</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="btn-open-movement-modal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 16V4M7 4 3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/>
+          </svg>
+          Record Movement
+        </button>
+        <button class="btn btn-primary" id="btn-open-product-modal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Product
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+
+      <!-- Urgent Alert Banner (shown when OPEN alerts exist) -->
+      <section class="alert-banner hidden" id="urgent-alert-banner" aria-live="polite">
+        <div class="alert-banner-content">
+          <div class="alert-banner-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div class="alert-banner-text">
+            <h4 id="banner-alert-title">Low Stock Attention Required!</h4>
+            <p id="banner-alert-desc">Products have fallen at or below their minimum reorder thresholds.</p>
+          </div>
+        </div>
+        <button class="btn btn-secondary" id="btn-view-alerts-from-banner">Review Alerts</button>
+      </section>
+
+      <!-- ==========================================================================
+           VIEW 1: DASHBOARD
+           ========================================================================== -->
+      <div class="view-panel active" id="view-dashboard">
+        <!-- KPI Metrics -->
+        <div class="kpi-grid">
+          <div class="kpi-card purple">
+            <div class="kpi-top">
+              <span class="kpi-title">Catalog Size</span>
+              <div class="kpi-icon-wrapper purple">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m7.5 4.27 9 5.15"/>
+                  <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                  <path d="m3.3 7 8.7 5 8.7-5"/>
+                  <path d="M12 22V12"/>
+                </svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-total-products">0</div>
+            <div class="kpi-subtitle">Managed items in database</div>
+          </div>
+
+          <div class="kpi-card rose">
+            <div class="kpi-top">
+              <span class="kpi-title">Active Alerts</span>
+              <div class="kpi-icon-wrapper rose">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                </svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-active-alerts">0</div>
+            <div class="kpi-subtitle">Items requiring replenishment</div>
+          </div>
+
+          <div class="kpi-card amber">
+            <div class="kpi-top">
+              <span class="kpi-title">Low / Zero Stock</span>
+              <div class="kpi-icon-wrapper amber">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 9v4"/>
+                  <path d="M12 17h.01"/>
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-low-stock">0</div>
+            <div class="kpi-subtitle">Below threshold level</div>
+          </div>
+
+          <div class="kpi-card emerald">
+            <div class="kpi-top">
+              <span class="kpi-title">Stock Movements</span>
+              <div class="kpi-icon-wrapper emerald">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+                  <polyline points="16 7 22 7 22 13"/>
+                </svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-total-movements">0</div>
+            <div class="kpi-subtitle">Audit transactions logged</div>
+          </div>
+        </div>
+
+        <!-- Recent Alerts Summary -->
+        <section class="card-section">
+          <div class="card-header">
+            <h2>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+              </svg>
+              Pending Reorder Recommendations
+            </h2>
+            <button class="btn btn-secondary" id="btn-goto-alerts">View All Alerts</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>SKU</th>
+                  <th>Current Stock</th>
+                  <th>Threshold</th>
+                  <th>Suggested Order Qty</th>
+                  <th>Triggered Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-alerts-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Recent Stock Movements -->
+        <section class="card-section">
+          <div class="card-header">
+            <h2>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 16V4M7 4 3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/>
+              </svg>
+              Recent Stock Movements
+            </h2>
+            <button class="btn btn-secondary" id="btn-goto-movements">View All Movements</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Product</th>
+                  <th>Type</th>
+                  <th>Quantity</th>
+                  <th>Reason</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-movements-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==========================================================================
+           VIEW 2: PRODUCTS
+           ========================================================================== -->
+      <div class="view-panel" id="view-products">
+        <section class="card-section">
+          <div class="card-header">
+            <h2>Products Inventory</h2>
+            <div class="filter-toolbar">
+              <div class="search-box">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" class="search-input" id="products-search-input" placeholder="Search by name or SKU...">
+              </div>
+              <select class="filter-select" id="products-category-filter">
+                <option value="">All Categories</option>
+              </select>
+              <select class="filter-select" id="products-stock-filter">
+                <option value="ALL">All Stock Levels</option>
+                <option value="OPTIMAL">Adequate Stock</option>
+                <option value="LOW">Low Stock</option>
+                <option value="OUT">Out of Stock</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>SKU</th>
+                  <th>Category</th>
+                  <th>Available Stock</th>
+                  <th>Reorder Threshold</th>
+                  <th>Reorder Qty</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==========================================================================
+           VIEW 3: STOCK MOVEMENTS
+           ========================================================================== -->
+      <div class="view-panel" id="view-movements">
+        <section class="card-section">
+          <div class="card-header">
+            <h2>Stock Movements Audit Trail</h2>
+            <div class="filter-toolbar">
+              <select class="filter-select" id="movements-product-filter">
+                <option value="">All Products</option>
+              </select>
+              <select class="filter-select" id="movements-type-filter">
+                <option value="">All Types (IN / OUT)</option>
+                <option value="IN">Stock IN</option>
+                <option value="OUT">Stock OUT</option>
+              </select>
+              <select class="filter-select" id="movements-reason-filter">
+                <option value="">All Reasons</option>
+                <option value="PURCHASE">Purchase (IN)</option>
+                <option value="SALE">Sale (OUT)</option>
+                <option value="RETURN">Customer Return (IN)</option>
+                <option value="DAMAGE">Damaged / Write-off (OUT)</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date / Time</th>
+                  <th>Product</th>
+                  <th>Type</th>
+                  <th>Quantity</th>
+                  <th>Reason</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="movements-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==========================================================================
+           VIEW 4: REORDER ALERTS
+           ========================================================================== -->
+      <div class="view-panel" id="view-alerts">
+        <section class="card-section">
+          <div class="card-header">
+            <h2>Reorder Alert Management</h2>
+            <div class="filter-toolbar">
+              <select class="filter-select" id="alerts-status-filter">
+                <option value="">All Statuses</option>
+                <option value="OPEN" selected>Open Alerts Only</option>
+                <option value="FULFILLED">Fulfilled Alerts</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Alert ID</th>
+                  <th>Product</th>
+                  <th>SKU</th>
+                  <th>Stock At Alert</th>
+                  <th>Threshold</th>
+                  <th>Reorder Quantity</th>
+                  <th>Status</th>
+                  <th>Created At</th>
+                  <th>Fulfilled At</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="alerts-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==========================================================================
+           VIEW 5: VELOCITY ANALYTICS
+           ========================================================================== -->
+      <div class="view-panel" id="view-analytics">
+        <section class="card-section">
+          <div class="card-header">
+            <h2>Fast-Moving Products (Sales Velocity)</h2>
+            <div class="filter-toolbar">
+              <input type="datetime-local" class="filter-select" id="analytics-start-date">
+              <input type="datetime-local" class="filter-select" id="analytics-end-date">
+              <button class="btn btn-primary" id="btn-run-analytics">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                Analyze
+              </button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <p class="form-helper">Items ranked by total sold quantity (Reason = SALE) within the selected timeframe.</p>
+            <div id="analytics-chart-container" class="chart-bar-list">
+              <!-- Dynamically populated bar charts -->
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       MODALS
+       ========================================================================== -->
+
+  <!-- Product Modal (Create & Edit) -->
+  <div class="modal-overlay" id="modal-product" role="dialog" aria-modal="true" aria-labelledby="modal-product-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-product-title">Add New Product</h3>
+        <button class="modal-close" id="btn-close-product-modal" aria-label="Close modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="form-product">
+        <input type="hidden" id="product-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="product-name">Product Name <span class="req">*</span></label>
+            <input type="text" class="form-control" id="product-name" required placeholder="e.g. Wireless Ergonomic Mouse">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="product-sku">SKU Code <span class="req">*</span></label>
+              <input type="text" class="form-control" id="product-sku" required placeholder="e.g. TECH-MSE-01">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="product-category">Category</label>
+              <input type="text" class="form-control" id="product-category" placeholder="e.g. Electronics">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="product-threshold">Reorder Threshold <span class="req">*</span></label>
+              <input type="number" class="form-control" id="product-threshold" min="0" required placeholder="e.g. 15">
+              <span class="form-helper">Alert triggers if stock drops to this level</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="product-quantity">Reorder Quantity <span class="req">*</span></label>
+              <input type="number" class="form-control" id="product-quantity" min="1" required placeholder="e.g. 50">
+              <span class="form-helper">Suggested replenishment batch</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-product-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-product">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Stock Movement Modal -->
+  <div class="modal-overlay" id="modal-movement" role="dialog" aria-modal="true" aria-labelledby="modal-movement-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-movement-title">Record Stock Movement</h3>
+        <button class="modal-close" id="btn-close-movement-modal" aria-label="Close modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="form-movement">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="movement-product-select">Select Product <span class="req">*</span></label>
+            <select class="form-control" id="movement-product-select" required>
+              <option value="">-- Choose Product --</option>
+            </select>
+            <div id="movement-current-stock-info" class="form-helper"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="movement-reason-select">Movement Reason <span class="req">*</span></label>
+            <select class="form-control" id="movement-reason-select" required>
+              <option value="PURCHASE">Purchase - Restock inventory (Stock IN)</option>
+              <option value="SALE">Sale - Customer purchase (Stock OUT)</option>
+              <option value="RETURN">Return - Customer returned item (Stock IN)</option>
+              <option value="DAMAGE">Damage - Damaged / scrap write-off (Stock OUT)</option>
+            </select>
+          </div>
+
+          <div class="form-badge-hint" id="movement-type-hint">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <span id="movement-type-hint-text">Will increase inventory & resolve any pending reorder alerts.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="movement-quantity">Quantity <span class="req">*</span></label>
+            <input type="number" class="form-control" id="movement-quantity" min="1" required placeholder="Units to move">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="movement-notes">Transaction Notes</label>
+            <input type="text" class="form-control" id="movement-notes" placeholder="e.g. PO #8921 Restock or Customer order #4492">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-movement-modal">Cancel</button>
+          <button type="submit" class="btn btn-success" id="btn-submit-movement">Submit Movement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Product History Modal -->
+  <div class="modal-overlay" id="modal-history" role="dialog" aria-modal="true" aria-labelledby="modal-history-title">
+    <div class="modal-box" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 id="modal-history-title">Stock History</h3>
+        <button class="modal-close" id="btn-close-history-modal" aria-label="Close modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date / Time</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th>Reason</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="product-history-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-close-history-footer">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

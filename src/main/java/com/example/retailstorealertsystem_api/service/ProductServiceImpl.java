@@ -9,7 +9,8 @@ import com.example.retailstorealertsystem_api.model.Product;
 import com.example.retailstorealertsystem_api.repository.ProductRepository;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService 
+{
 
     private ProductRepository productrepo;
 
